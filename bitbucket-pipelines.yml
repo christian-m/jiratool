@@ -5,10 +5,37 @@ pipelines:
         name: Test
         script:
           - make test
-    - step:
-        name: Build
-        script:
-          - apt-get update && apt-get install -y zip
-          - make all
-        artifacts:
-          - build/**
+  branches:
+    develop:
+      - step:
+          name: Test
+          script:
+            - make test
+      - step:
+          name: Build
+          script:
+            - apt-get update && apt-get install -y zip
+            - make all
+          artifacts:
+            - build/**
+    main:
+      - step:
+          name: Test
+          script:
+            - make test
+      - step:
+          name: Build
+          trigger: manual
+          script:
+            - apt-get update && apt-get install -y zip
+            - make all
+          artifacts:
+            - build/**
+      - step:
+          name: Deploy
+          script:
+            - pipe: atlassian/bitbucket-upload-file:0.3.2
+              variables:
+                BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+                BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+                FILENAME: 'build/*'
