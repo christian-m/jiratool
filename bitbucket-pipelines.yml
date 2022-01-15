@@ -1,0 +1,14 @@
+image: golang:1.16
+pipelines:
+  default:
+    - step:
+        name: Test
+        script:
+          - make test
+    - step:
+        name: Build
+        script:
+          - apt-get update && apt-get install -y zip
+          - make all
+        artifacts:
+          - build/**
