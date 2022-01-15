@@ -5,9 +5,11 @@ name_cmd := jiratool
 pkg_base := bitbucket.org/christian_m/jiratool
 pkg_cmd := $(pkg_base)/cmd/$(name_cmd)
 
+version := $(if $(shell git describe --tags --abbrev=0),$(shell git describe --tags --abbrev=0),build_$(shell git rev-parse --short HEAD))
+
 build = GOOS=$(1) GOARCH=$(2) go build -o $(build_dir)/$(3)$(4) $(5)
-tar = cd $(build_dir) && tar -cvzf $(1).tar.gz $(2)$(3) && rm $(2)$(3)
-zip = cd $(build_dir) && zip $(1).zip $(2)$(3) && rm $(2)$(3)
+tar = cd $(build_dir) && tar -cvzf $(2)_$(1)_$(version).tar.gz $(2)$(3) && rm $(2)$(3)
+zip = cd $(build_dir) && zip $(2)_$(1)_$(version).zip $(2)$(3) && rm $(2)$(3)
 
 .PHONY: all macos linux windows clean dep fmt test install
 
