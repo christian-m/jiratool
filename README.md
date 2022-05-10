@@ -9,6 +9,7 @@ Submit batch changes over one or multiple projects to Jira Cloud
 | -u        | string | yes       |         | Jira Username                            |
 | -a        | string | yes       |         | Jira API-Key                             |
 | -p        | string | yes       |         | list of Jira projects (comma separated)  |
+| -iv       | string | no        |         | inspect project version                  |
 | -cv       | string | no        |         | create project version (release)         |
 | -rv       | string | no        |         | release project version                  | 
 | -rd       | string | no        | today   | release date of released project version |

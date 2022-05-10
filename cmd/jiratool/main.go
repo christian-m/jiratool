@@ -21,6 +21,7 @@ var (
 	flagApiKey         = flag.String("a", "", "Jira API-Key")
 	flagCloudAlias     = flag.String("h", "", "Jira Cloud Alias")
 	flagProjects       = flag.String("p", "", "Jira Projekte (kommasepariert)")
+	flagInspectVersion = flag.String("iv", "", "Projektversion anzeigen")
 	flagCreateVersion  = flag.String("cv", "", "Projektversion anlegen")
 	flagReleaseVersion = flag.String("rv", "", "Projektversion Release")
 	flagReleaseDate    = flag.String("rd", "", "Projektversion Release Datum")
@@ -65,6 +66,14 @@ func main() {
 			continue
 		}
 		switch {
+		case *flagInspectVersion != "":
+			ver := *flagInspectVersion
+			verData, err := internal.InspectVersion(prj, ver, c)
+			if err != nil {
+				log.Println(err)
+			} else {
+				log.Printf(verData)
+			}
 		case *flagCreateVersion != "":
 			ver := *flagCreateVersion
 			err := internal.CreateVersion(prj, ver, c)
