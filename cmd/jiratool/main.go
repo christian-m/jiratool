@@ -21,6 +21,7 @@ var (
 	flagApiKey         = flag.String("a", "", "Jira API-Key")
 	flagCloudAlias     = flag.String("h", "", "Jira Cloud Alias")
 	flagProjects       = flag.String("p", "", "Jira Projekte (kommasepariert)")
+	flagInspectVersion = flag.String("iv", "", "Projektversion anzeigen")
 	flagCreateVersion  = flag.String("cv", "", "Projektversion anlegen")
 	flagReleaseVersion = flag.String("rv", "", "Projektversion Release")
 	flagReleaseDate    = flag.String("rd", "", "Projektversion Release Datum")
@@ -65,6 +66,14 @@ func main() {
 			continue
 		}
 		switch {
+		case *flagInspectVersion != "":
+			ver := *flagInspectVersion
+			verData, err := internal.InspectVersion(prj, ver, c)
+			if err != nil {
+				log.Println(err)
+			} else {
+				log.Printf(verData)
+			}
 		case *flagCreateVersion != "":
 			ver := *flagCreateVersion
 			err := internal.CreateVersion(prj, ver, c)
@@ -73,13 +82,18 @@ func main() {
 			} else {
 				log.Printf("Version %s in Projekt %s angelegt", ver, prj.Key)
 			}
-		case *flagReleaseVersion != "" && *flagReleaseDate != "":
+		case *flagReleaseVersion != "":
 			ver := *flagReleaseVersion
-			relDate := *flagReleaseDate
-			_, err := time.Parse(layoutISO, relDate)
-			if err != nil {
-				log.Printf("Das Release Datum '%s' hat nicht das richtige Format (JJJJ-MM-TT)", relDate)
-				break
+			var relDate string
+			if *flagReleaseDate != "" {
+				relDate = *flagReleaseDate
+				_, err := time.Parse(layoutISO, relDate)
+				if err != nil {
+					log.Printf("Das Release Datum '%s' hat nicht das richtige Format (JJJJ-MM-TT)", relDate)
+					break
+				}
+			} else {
+				relDate = time.Now().Format(layoutISO)
 			}
 			err = internal.ReleaseVersion(prj, ver, relDate, c)
 			if err != nil {
