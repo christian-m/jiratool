@@ -82,13 +82,18 @@ func main() {
 			} else {
 				log.Printf("Version %s in Projekt %s angelegt", ver, prj.Key)
 			}
-		case *flagReleaseVersion != "" && *flagReleaseDate != "":
+		case *flagReleaseVersion != "":
 			ver := *flagReleaseVersion
-			relDate := *flagReleaseDate
-			_, err := time.Parse(layoutISO, relDate)
-			if err != nil {
-				log.Printf("Das Release Datum '%s' hat nicht das richtige Format (JJJJ-MM-TT)", relDate)
-				break
+			var relDate string
+			if *flagReleaseDate != "" {
+				relDate = *flagReleaseDate
+				_, err := time.Parse(layoutISO, relDate)
+				if err != nil {
+					log.Printf("Das Release Datum '%s' hat nicht das richtige Format (JJJJ-MM-TT)", relDate)
+					break
+				}
+			} else {
+				relDate = time.Now().Format(layoutISO)
 			}
 			err = internal.ReleaseVersion(prj, ver, relDate, c)
 			if err != nil {
